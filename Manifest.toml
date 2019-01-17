@@ -9,6 +9,13 @@ git-tree-sha1 = "055eb2690182ebc31087859c3dd8598371d3ef9e"
 uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 version = "0.5.3"
 
+[[Cameras]]
+git-tree-sha1 = "f174e0dbfb934ae6d587d03624b055ab293060ed"
+repo-rev = "a607ff340df3671dd2189685d6c035f5f0dd6e36"
+repo-url = "https://github.com/IHPSystems/Cameras.jl"
+uuid = "a3f77020-e286-11e8-192c-2d14e9f48747"
+version = "0.1.0"
+
 [[CxxWrap]]
 deps = ["BinaryProvider", "Libdl", "Test"]
 git-tree-sha1 = "8da57ef9a68690903b0fc625e935b49f53ba58f9"

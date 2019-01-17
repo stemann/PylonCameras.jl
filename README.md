@@ -8,3 +8,7 @@ Build the package:
 ```
 julia --eval 'using Pkg; pkg"activate ."; pkg"instantiate"; pkg"build"'
 ```
+Run the `pyloncamera.jl` sample:
+```
+julia --eval 'import Pkg; Pkg.activate("."); include("samples/pyloncamera.jl")'
+```
