@@ -1,4 +1,5 @@
 using BinaryProvider # requires BinaryProvider 0.3.0 or later
+using CxxWrap # this is needed for opening the dependency lib. Otherwise Libdl.dlopen fails
 
 # Parse some basic command-line arguments
 const verbose = "--verbose" in ARGS
