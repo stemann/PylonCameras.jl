@@ -5,7 +5,7 @@ version = "0.1.0"
 
 [deps]
 BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
-Cameras = "a3f77020-e286-11e8-192c-2d14e9f48747"
+Cameras = "6410b9bd-72f2-532f-9386-433801972073"
 CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
 ResourcePools = "16787047-0d73-522e-b8c7-4a818d739b35"
 

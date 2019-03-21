@@ -20,6 +20,7 @@ export PylonCamera,
     trigger!
 
 include("wrapper.jl")
+include("pylon_acquired_image.jl")
 
 mutable struct PylonCamera <: Camera
     device::Wrapper.IPylonDevice
@@ -54,7 +55,7 @@ start!(c::PylonCamera) = Wrapper.start_grabbing_async(c.instant_camera, c.grab_r
 start!(c::PylonCamera, images_to_grab::Int) = Wrapper.start_grabbing_async(c.instant_camera, UInt64(images_to_grab), c.grab_result_wait_timeout_ms, Wrapper.notify_async_cond_safe_c, c.grab_result_ready_cond.handle)
 stop!(c::PylonCamera) = Wrapper.stop_grabbing(c.instant_camera)
 
-function take!(c::PylonCamera)
+function take!(c::PylonCamera)::AcquiredImage
     @debug "Waiting for result"
     wait(c.grab_result_ready_cond)
     @debug "Retrieving result for $(c.grab_result_retrieve_timeout_ms) ms"
@@ -63,23 +64,7 @@ function take!(c::PylonCamera)
     grab_result = Wrapper.retrieve_result(c.instant_camera, c.grab_result_retrieve_timeout_ms)
     @debug "Retrieved $(grab_result)"
     if Wrapper.grab_succeeded(grab_result)
-        width = Wrapper.get_width(grab_result)
-        height = Wrapper.get_height(grab_result)
-        buffer = Wrapper.get_buffer(grab_result)
-        pixel_type = Wrapper.get_pixel_type(grab_result)
-        if Wrapper.is_bgr(pixel_type) || Wrapper.is_rgb(pixel_type)
-            samples_per_pixel = Wrapper.samples_per_pixel(pixel_type)
-            size = (samples_per_pixel, width, height)
-        else
-            size = (width, height)
-        end
-        @assert prod(size) == Wrapper.get_image_size(grab_result)
-        buffer_array = unsafe_wrap(Array, Ptr{UInt8}(buffer), size)
-        function dispose(a)
-            @debug "Releasing $(grab_result)"
-            Wrapper.release(grab_result)
-        end
-        return PooledArray(buffer_array, dispose)
+        return PylonAcquiredImage(grab_result)
     else
         error("$(Wrapper.get_error_code(grab_result)) $(Wrapper.get_error_description(grab_result))")
     end

@@ -1,5 +1,3 @@
-# This file is machine-generated - editing it directly is not advised
-
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
@@ -10,10 +8,11 @@ uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 version = "0.5.3"
 
 [[Cameras]]
-git-tree-sha1 = "f174e0dbfb934ae6d587d03624b055ab293060ed"
-repo-rev = "a607ff340df3671dd2189685d6c035f5f0dd6e36"
+deps = ["ResourcePools"]
+git-tree-sha1 = "df8d1ef26aa58347f822d9520fdf6f69c26ce8f5"
+repo-rev = "feature/acquired_image"
 repo-url = "https://github.com/IHPSystems/Cameras.jl"
-uuid = "a3f77020-e286-11e8-192c-2d14e9f48747"
+uuid = "6410b9bd-72f2-532f-9386-433801972073"
 version = "0.1.0"
 
 [[CxxWrap]]
@@ -33,11 +32,11 @@ deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[Distributed]]
-deps = ["Random", "Serialization", "Sockets"]
+deps = ["LinearAlgebra", "Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[InteractiveUtils]]
-deps = ["Markdown"]
+deps = ["LinearAlgebra", "Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[LibGit2]]
@@ -45,6 +44,10 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[[LinearAlgebra]]
+deps = ["Libdl"]
+uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -77,7 +80,7 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[ResourcePools]]
 deps = ["DataStructures"]
-git-tree-sha1 = "64903cf0fd1ab7672358be77030510af8b0a857b"
+git-tree-sha1 = "a980d0ac90859a39cb3e3f1761200aaaf8862cc6"
 repo-rev = "feature/pooled_resource"
 repo-url = "https://github.com/IHPSystems/ResourcePools.jl"
 uuid = "16787047-0d73-522e-b8c7-4a818d739b35"
@@ -97,7 +100,7 @@ deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[UUIDs]]
-deps = ["Random", "SHA"]
+deps = ["Random"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
