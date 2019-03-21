@@ -1,7 +1,7 @@
 mutable struct PylonAcquiredImage{T,N} <: AcquiredImage{T,N}
     grab_result
-    # Inherits behaviour of AbstractPooledArray, by having the same fields
-    array::AbstractArray{T,N}
+    # Inherits behaviour of AbstractPooledDenseArray, by having the same fields
+    array::Array{T,N}
     ref_count::Int
     dispose::Function
     function PylonAcquiredImage(grab_result)

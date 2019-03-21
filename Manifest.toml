@@ -9,11 +9,11 @@ version = "0.5.3"
 
 [[Cameras]]
 deps = ["ResourcePools"]
-git-tree-sha1 = "df8d1ef26aa58347f822d9520fdf6f69c26ce8f5"
-repo-rev = "feature/acquired_image"
+git-tree-sha1 = "cf8acdc855b115c12302465d40e26de3aa65446c"
+repo-rev = "425438360b935768a9362b587f5b037ba7bd247e"
 repo-url = "https://github.com/IHPSystems/Cameras.jl"
 uuid = "6410b9bd-72f2-532f-9386-433801972073"
-version = "0.1.0"
+version = "0.2.0"
 
 [[CxxWrap]]
 deps = ["BinaryProvider", "Libdl", "Test"]
@@ -80,8 +80,8 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[ResourcePools]]
 deps = ["DataStructures"]
-git-tree-sha1 = "a980d0ac90859a39cb3e3f1761200aaaf8862cc6"
-repo-rev = "feature/pooled_resource"
+git-tree-sha1 = "89d6f505dd0bf8dea6dcc20ca4f630fa63a6b797"
+repo-rev = "b481eb351adeb84e354ae6863af767ff6e11ce80"
 repo-url = "https://github.com/IHPSystems/ResourcePools.jl"
 uuid = "16787047-0d73-522e-b8c7-4a818d739b35"
 version = "0.1.0"
