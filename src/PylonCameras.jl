@@ -4,19 +4,24 @@ using Cameras
 using ResourcePools
 
 import Cameras:
+    id,
     isrunning,
     start!,
     stop!,
     take!,
+    timestamp,
     trigger!
 
 export PylonCamera,
+    id,
+    image_number,
     isrunning,
     open!,
     close!,
     start!,
     stop!,
     take!,
+    timestamp,
     trigger!
 
 include("wrapper.jl")

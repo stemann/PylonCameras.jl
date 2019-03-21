@@ -27,3 +27,7 @@ function dispose(img::PylonAcquiredImage)
     @debug "Releasing $(img.grab_result)"
     Wrapper.release(img.grab_result)
 end
+
+id(img::PylonAcquiredImage) = Wrapper.get_id(img.grab_result)
+image_number(img::PylonAcquiredImage) = Wrapper.get_image_number(img.grab_result)
+timestamp(img::PylonAcquiredImage) = Wrapper.get_time_stamp(img.grab_result)

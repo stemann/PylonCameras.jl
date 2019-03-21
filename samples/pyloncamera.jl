@@ -15,7 +15,7 @@ try
 
     while isrunning(camera)
         img = take!(camera)
-        print("$(size(img)) : ")
+        print("ID $(id(img)), No. $(image_number(img)) @ $(timestamp(img)), size $(size(img)) : ")
         @show img[1,1,1]
         release!(img)
     end
