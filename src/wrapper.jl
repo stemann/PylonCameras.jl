@@ -1,12 +1,12 @@
 module Wrapper
-    import Base: iterate, IteratorSize, length
+    # Disabled precompilation due to segmentation fault when calling functions
+    # in Wrapper module -- with __init__() calling @initcxx
+    __precompile__(false)
 
     using CxxWrap
     @wrapmodule(joinpath(@__DIR__, "..", "deps", "usr", "lib", "libpylon_julia_wrapper"), :define_pylon_wrapper)
 
-    function __init__()
-        @initcxx
-    end
+    import Base: iterate, IteratorSize, length
 
     notify_async_cond(handle::Ptr{Nothing}) = ccall(:uv_async_send, Cint, (Ptr{Nothing}, ), handle)
     notify_async_cond_safe_c = @safe_cfunction(notify_async_cond, Int32, (Ptr{Nothing}, ))

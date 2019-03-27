@@ -1,7 +1,5 @@
-include(joinpath("..", "src", "PylonCameras.jl"))
-
 using Cameras
-using .PylonCameras
+using PylonCameras
 
 const images_to_grab = 30
 const max_num_buffer = 8
