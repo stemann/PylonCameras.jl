@@ -33,7 +33,12 @@ mutable struct PylonCamera <: Camera
     grab_result_ready_cond::Base.AsyncCondition
     grab_result_wait_timeout_ms::UInt32
     grab_result_retrieve_timeout_ms::UInt32
-    function PylonCamera(max_num_buffer::Int, grab_result_wait_timeout_ms::Int, grab_result_retrieve_timeout_ms::Int)
+    feature_filename::Union{String, Nothing}
+    function PylonCamera(;
+            max_num_buffer = 10,
+            grab_result_wait_timeout_ms = 5000,
+            grab_result_retrieve_timeout_ms = 100,
+            feature_filename::Union{String, Nothing} = nothing)
         Wrapper.pylon_initialize()
         transport_layer_factory = Wrapper.get_transport_layer_factory_instance()
         grab_result_ready_cond = Base.AsyncCondition()
@@ -41,7 +46,7 @@ mutable struct PylonCamera <: Camera
         device = Wrapper.create_first_device(transport_layer_factory)
         instant_camera = Wrapper.InstantCamera(device)
         Wrapper.max_num_buffer!(instant_camera, UInt(max_num_buffer))
-        new(device, instant_camera, grab_result_ready_cond, grab_result_wait_timeout_ms, grab_result_retrieve_timeout_ms)
+        new(device, instant_camera, grab_result_ready_cond, grab_result_wait_timeout_ms, grab_result_retrieve_timeout_ms, feature_filename)
     end
 end
 
@@ -54,7 +59,22 @@ function info(c::PylonCamera)
 end
 
 isrunning(c::PylonCamera) = Wrapper.is_grabbing(c.instant_camera)
-open!(c::PylonCamera) = Wrapper.open(c.instant_camera)
+
+function open!(c::PylonCamera)
+    if c.feature_filename != nothing
+        @debug "Removing default configuration from instance"
+        Wrapper.register_configuration(c.instant_camera, C_NULL, Wrapper.RegistrationMode_ReplaceAll, Wrapper.Cleanup_None)
+    end
+    @debug "Opening camera"
+    Wrapper.open(c.instant_camera)
+    if c.feature_filename != nothing
+        @debug "Getting camera node map"
+        node_map = Wrapper.get_node_map(c.instant_camera)
+        @debug "Loading node map from $(c.feature_filename)"
+        Wrapper.load(c.feature_filename, node_map)
+    end
+end
+
 close!(c::PylonCamera) = Wrapper.close(c.instant_camera)
 start!(c::PylonCamera) = Wrapper.start_grabbing_async(c.instant_camera, c.grab_result_wait_timeout_ms, Wrapper.notify_async_cond_safe_c, c.grab_result_ready_cond.handle)
 start!(c::PylonCamera, images_to_grab::Int) = Wrapper.start_grabbing_async(c.instant_camera, UInt64(images_to_grab), c.grab_result_wait_timeout_ms, Wrapper.notify_async_cond_safe_c, c.grab_result_ready_cond.handle)

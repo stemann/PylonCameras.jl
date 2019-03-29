@@ -2,14 +2,15 @@ using Cameras
 using PylonCameras
 
 const images_to_grab = 30
-const max_num_buffer = 8
-const grab_result_wait_timeout_ms = 100
-const grab_result_retrieve_timeout_ms = 1
 
 function acquire_images()
-    camera = PylonCamera(max_num_buffer, grab_result_wait_timeout_ms, grab_result_retrieve_timeout_ms)
+    camera = PylonCamera(
+        max_num_buffer = 8,
+        grab_result_wait_timeout_ms = 100,
+        grab_result_retrieve_timeout_ms = 1)
     try
         println("Using $(PylonCameras.info(camera))")
+        open!(camera)
         start!(camera, images_to_grab)
 
         while isrunning(camera)
