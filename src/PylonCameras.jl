@@ -1,28 +1,35 @@
 module PylonCameras
 
 using Cameras
+using ColorTypes
+using FixedPointNumbers
+using ImageCore
 using ResourcePools
 
 import Cameras:
-    id,
-    isrunning,
-    start!,
-    stop!,
-    take!,
-    timestamp,
-    trigger!
-
-export PylonCamera,
-    id,
-    image_number,
-    isrunning,
+    isopen,
     open!,
     close!,
+    isrunning,
     start!,
     stop!,
     take!,
-    timestamp,
-    trigger!
+    trigger!,
+    id,
+    timestamp
+
+export PylonCamera,
+    isopen,
+    open!,
+    close!,
+    isrunning,
+    start!,
+    stop!,
+    take!,
+    trigger!,
+    id,
+    image_number,
+    timestamp
 
 include("wrapper.jl")
 include("pylon_acquired_image.jl")
@@ -58,7 +65,7 @@ function info(c::PylonCamera)
     return vendor_name, model_name, serial_number
 end
 
-isrunning(c::PylonCamera) = Wrapper.is_grabbing(c.instant_camera)
+isopen(c::PylonCamera) = Wrapper.is_open(c.instant_camera)
 
 function open!(c::PylonCamera)
     if c.feature_filename != nothing
@@ -71,16 +78,19 @@ function open!(c::PylonCamera)
         @debug "Getting camera node map"
         node_map = Wrapper.get_node_map(c.instant_camera)
         @debug "Loading node map from $(c.feature_filename)"
-        Wrapper.load(c.feature_filename, node_map)
+        Wrapper.load_features(c.feature_filename, node_map)
     end
 end
 
 close!(c::PylonCamera) = Wrapper.close(c.instant_camera)
+
+isrunning(c::PylonCamera) = Wrapper.is_grabbing(c.instant_camera)
+
 start!(c::PylonCamera) = Wrapper.start_grabbing_async(c.instant_camera, c.grab_result_wait_timeout_ms, Wrapper.notify_async_cond_safe_c, c.grab_result_ready_cond.handle)
 start!(c::PylonCamera, images_to_grab::Int) = Wrapper.start_grabbing_async(c.instant_camera, UInt64(images_to_grab), c.grab_result_wait_timeout_ms, Wrapper.notify_async_cond_safe_c, c.grab_result_ready_cond.handle)
 stop!(c::PylonCamera) = Wrapper.stop_grabbing(c.instant_camera)
 
-function take!(c::PylonCamera)::AcquiredImage
+function take!(c::PylonCamera)::AbstractAcquiredImage
     @debug "Waiting for result"
     wait(c.grab_result_ready_cond)
     @debug "Retrieving result for $(c.grab_result_retrieve_timeout_ms) ms"

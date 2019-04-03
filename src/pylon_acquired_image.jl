@@ -1,11 +1,10 @@
-mutable struct PylonAcquiredImage{T,N} <: AcquiredImage{T,N}
+mutable struct PylonAcquiredImage{T,N} <: AbstractAcquiredImage{T,N}
     grab_result
     # Inherits behaviour of AbstractPooledDenseArray, by having the same fields
     array::Array{T,N}
     ref_count::Int
     dispose::Function
     function PylonAcquiredImage(grab_result)
-        T = UInt8
         width = Wrapper.get_width(grab_result)
         height = Wrapper.get_height(grab_result)
         buffer = Wrapper.get_buffer(grab_result)
@@ -13,13 +12,16 @@ mutable struct PylonAcquiredImage{T,N} <: AcquiredImage{T,N}
         if Wrapper.is_bgr(pixel_type) || Wrapper.is_rgb(pixel_type)
             samples_per_pixel = Wrapper.samples_per_pixel(pixel_type)
             size = (samples_per_pixel, width, height)
+            TPixel = Wrapper.is_bgr(pixel_type) ? BGR : RGB
         else
             size = (width, height)
+            TPixel = Gray
         end
         @assert prod(size) == Wrapper.get_image_size(grab_result)
-        buffer_array = unsafe_wrap(Array, Ptr{T}(buffer), size)
-        N = ndims(buffer_array)
-        new{T,N}(grab_result, buffer_array, 1, dispose)
+        buffer_array = unsafe_wrap(Array, Ptr{UInt8}(buffer), size)
+        image = colorview(TPixel, normedview(buffer_array))
+        N = ndims(image)
+        new{TPixel{N0f8},N}(grab_result, image, 1, dispose)
     end
 end
 
