@@ -17,9 +17,13 @@ docker run --rm -it --device=/dev/bus/usb/004/002 pylon_cameras julia --eval 'im
 ```
 
 ## Local
-Set dynamic/shared library loading path properly. E.g., on Linux (x86_64):
+Ensure the dynamic/shared library loading path includes the proper version of Basler pylon (see required major and minor version in `Dockerfile`). E.g., on Linux (x86_64):
 ```
 export LD_LIBRARY_PATH=/opt/pylon5/lib64
+```
+On macOS:
+```
+export LD_LIBRARY_PATH=/Library/Frameworks/pylon.framework/Libraries
 ```
 Build the package:
 ```
@@ -29,3 +33,4 @@ Run the `pyloncamera.jl` sample:
 ```
 julia --eval 'import Pkg; Pkg.activate("."); include("samples/pyloncamera.jl")'
 ```
+Set `PYLON_CAMEMU=N` to enable the emulation of `N` cameras.
