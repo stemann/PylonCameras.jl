@@ -45,18 +45,36 @@ mutable struct PylonCamera <: Camera
     grab_result_retrieve_timeout_ms::UInt32
     feature_filename::Union{String, Nothing}
     function PylonCamera(;
+            vendor_name::Union{String, Nothing} = nothing,
+            model_name::Union{String, Nothing} = nothing,
+            serial_number::Union{String, Nothing} = nothing,
             max_num_buffer = 10,
             grab_result_wait_timeout_ms = 5000,
             grab_result_retrieve_timeout_ms = 100,
             feature_filename::Union{String, Nothing} = nothing)
         Wrapper.pylon_initialize()
-        transport_layer_factory = Wrapper.get_transport_layer_factory_instance()
 
         terminate_waiter_event = Wrapper.create_wait_object_ex(false)
         initiate_wait_event = Wrapper.create_wait_object_ex(false)
         grab_result_ready_cond = Base.AsyncCondition()
 
-        device = Wrapper.create_first_device(transport_layer_factory)
+        transport_layer_factory = Wrapper.get_transport_layer_factory_instance()
+        device_infos = Wrapper.enumerate_devices(transport_layer_factory)
+        function matches(device_info;
+                vendor_name::Union{Regex,String, Nothing} = nothing,
+                model_name::Union{Regex,String, Nothing} = nothing,
+                serial_number::Union{Regex,String, Nothing} = nothing)
+            (vendor_name == nothing || occursin(vendor_name, Wrapper.get_vendor_name(device_info))) &&
+            (model_name == nothing || occursin(model_name, Wrapper.get_model_name(device_info))) &&
+            (serial_number == nothing || occursin(serial_number, Wrapper.get_serial_number(device_info)))
+        end
+        matching_device_infos = filter(
+            dev -> matches(dev, vendor_name = vendor_name, model_name = model_name, serial_number = serial_number),
+            collect(device_infos))
+        if isempty(matching_device_infos)
+            error("No matching camera found!")
+        end
+        device = Wrapper.create_device(transport_layer_factory, first(matching_device_infos))
         instant_camera = Wrapper.InstantCamera(device)
         Wrapper.max_num_buffer!(instant_camera, UInt(max_num_buffer))
         new(device, instant_camera,

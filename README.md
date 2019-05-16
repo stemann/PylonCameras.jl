@@ -34,3 +34,8 @@ Run the `pyloncamera.jl` sample:
 julia --eval 'import Pkg; Pkg.activate("."); include("samples/pyloncamera.jl")'
 ```
 Set `PYLON_CAMEMU=N` to enable the emulation of `N` cameras.
+
+Optionally, use args to specify which camera model and serial number to use:
+```
+PYLON_CAMEMU=2 julia --eval 'import Pkg; Pkg.activate("."); include("samples/pyloncamera.jl")' Emulation 0815-0001
+```

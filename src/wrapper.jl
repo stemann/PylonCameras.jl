@@ -3,7 +3,7 @@ module Wrapper
     # in Wrapper module -- with __init__() calling @initcxx
     __precompile__(false)
 
-    import Base: iterate, IteratorSize, length
+    import Base: eltype, iterate, length
 
     using CxxWrap
     @wrapmodule(joinpath(@__DIR__, "..", "deps", "usr", "lib", "libpylon_julia_wrapper"), :define_pylon_wrapper)
@@ -12,5 +12,5 @@ module Wrapper
 
     iterate(list::DeviceInfoList) = length(list) > 0 ? (list[1], 2) : nothing
     iterate(list::DeviceInfoList, i) = i <= length(list) ? (list[i], i+1) : nothing
-    IteratorSize(list::DeviceInfoList) = length(list)
+    eltype(list::DeviceInfoList) = DeviceInfo
 end
