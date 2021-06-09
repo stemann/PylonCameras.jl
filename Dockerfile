@@ -19,6 +19,6 @@ ENV LD_LIBRARY_PATH=/opt/pylon5/lib64
 COPY . /project
 WORKDIR /project
 
-RUN julia --eval 'using Pkg; pkg"activate ."; pkg"instantiate"; pkg"build"'
+RUN julia --project --eval 'using Pkg; pkg"instantiate"; pkg"build"; using PylonCameras'
 
-CMD julia --eval 'import Pkg; Pkg.activate(".")' -i
+CMD julia --project -i
