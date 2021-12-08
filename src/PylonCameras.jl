@@ -35,11 +35,11 @@ include("wrapper.jl")
 include("pylon_acquired_image.jl")
 
 mutable struct PylonCamera <: Camera
-    device::Wrapper.IPylonDevice
+    device_info::Wrapper.DeviceInfo
     instant_camera::Wrapper.InstantCamera
     terminate_waiter_event::Wrapper.WaitObjectEx
     initiate_wait_event::Wrapper.WaitObjectEx
-    grab_result_waiter::Ptr{Nothing}
+    grab_result_waiter::Union{Wrapper.StdThread, Nothing}
     grab_result_ready_cond::Base.AsyncCondition
     grab_result_wait_timeout_ms::UInt32
     grab_result_retrieve_timeout_ms::UInt32
@@ -58,8 +58,7 @@ mutable struct PylonCamera <: Camera
         initiate_wait_event = Wrapper.create_wait_object_ex(false)
         grab_result_ready_cond = Base.AsyncCondition()
 
-        transport_layer_factory = Wrapper.get_transport_layer_factory_instance()
-        device_infos = Wrapper.enumerate_devices(transport_layer_factory)
+        device_infos = Wrapper.enumerate_devices()
         function matches(device_info;
                 vendor_name::Union{Regex,String, Nothing} = nothing,
                 model_name::Union{Regex,String, Nothing} = nothing,
@@ -74,13 +73,13 @@ mutable struct PylonCamera <: Camera
         if isempty(matching_device_infos)
             error("No matching camera found!")
         end
-        device = Wrapper.create_device(transport_layer_factory, first(matching_device_infos))
-        instant_camera = Wrapper.InstantCamera(device)
+        device_info = first(matching_device_infos)
+        instant_camera = Wrapper.InstantCamera(device_info)
         Wrapper.max_num_buffer!(instant_camera, UInt(max_num_buffer))
-        new(device, instant_camera,
+        new(device_info, instant_camera,
             terminate_waiter_event,
             initiate_wait_event,
-            C_NULL,
+            nothing,
             grab_result_ready_cond,
             grab_result_wait_timeout_ms,
             grab_result_retrieve_timeout_ms,
@@ -89,10 +88,9 @@ mutable struct PylonCamera <: Camera
 end
 
 function info(c::PylonCamera)
-    device_info = Wrapper.get_device_info(c.device)
-    vendor_name = Wrapper.get_vendor_name(device_info)
-    model_name = Wrapper.get_model_name(device_info)
-    serial_number = Wrapper.get_serial_number(device_info)
+    vendor_name = Wrapper.get_vendor_name(c.device_info)
+    model_name = Wrapper.get_model_name(c.device_info)
+    serial_number = Wrapper.get_serial_number(c.device_info)
     return vendor_name, model_name, serial_number
 end
 

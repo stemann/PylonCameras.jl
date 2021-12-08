@@ -4,17 +4,18 @@ authors = ["IHP Systems R&D <research@ihp.dk>"]
 version = "0.4.0"
 
 [deps]
-BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 Cameras = "6410b9bd-72f2-532f-9386-433801972073"
 ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
 FixedPointNumbers = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 ImageCore = "a09fc81d-aa75-5fe9-8630-4744c3626534"
 ResourcePools = "16787047-0d73-522e-b8c7-4a818d739b35"
+pylon_julia_wrapper_jll = "143bfe80-f615-5003-af3e-0ff003e3d3eb"
 
 [compat]
-BinaryProvider = "= 0.5.8"
-CxxWrap = "= 0.8.1"
+CxxWrap = "0.11.2"
+julia = "1.6"
+pylon_julia_wrapper_jll = "0.5.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
