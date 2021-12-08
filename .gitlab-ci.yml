@@ -1,12 +1,9 @@
-stages:
-  - build
+include:
+  - project: 'ihp/julia/julia-gitlab-ci-templates'
+    ref: v1.1.0
+    file: '/.gitlab-ci_template.yaml'
 
-build:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  script:
-    - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:latest --no-push
+test:1.6:
+  extends:
+    - .julia:1.6
+    - .julia.test.basic
