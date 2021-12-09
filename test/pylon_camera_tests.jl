@@ -49,4 +49,21 @@ using Test
         @test model_name == expected_model_name
         @test serial_number == selected_serial_number
     end
+
+    @testset "Opening/Closing" begin
+        camera = PylonCamera()
+
+        @test !isopen(camera)
+        open!(camera)
+        @test isopen(camera)
+        close!(camera)
+        @test !isopen(camera)
+
+        @testset "Re-opening a camera" begin
+            open!(camera)
+            @test isopen(camera)
+            close!(camera)
+            @test !isopen(camera)
+        end
+    end
 end
