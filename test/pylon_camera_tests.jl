@@ -1,3 +1,4 @@
+using Cameras
 using PylonCameras
 using Test
 
@@ -65,5 +66,50 @@ using Test
             close!(camera)
             @test !isopen(camera)
         end
+    end
+
+    @testset "Grab synchronously, finite" begin
+        images_to_grab = 1
+        camera = PylonCamera()
+        open!(camera)
+
+        images_grabbed = 0
+        @test !isrunning(camera)
+        start!(camera, images_to_grab)
+        @test isrunning(camera)
+        while isrunning(camera)
+            img = take!(camera)
+            images_grabbed = images_grabbed + 1
+            release!(img)
+        end
+        stop!(camera)
+        @test !isrunning(camera)
+        @test images_grabbed == images_to_grab
+
+        @testset "Re-start grabbing" begin
+            start!(camera, images_to_grab)
+            @test isrunning(camera)
+            stop!(camera)
+            @test !isrunning(camera)
+        end
+    end
+
+    @testset "Grab synchronously, infinite" begin
+        images_to_grab = 1
+        camera = PylonCamera()
+        open!(camera)
+
+        images_grabbed = 0
+        @test !isrunning(camera)
+        start!(camera)
+        @test isrunning(camera)
+        while images_grabbed < images_to_grab
+            img = take!(camera)
+            images_grabbed = images_grabbed + 1
+            release!(img)
+        end
+        stop!(camera)
+        @test !isrunning(camera)
+        @test images_grabbed == images_to_grab
     end
 end
