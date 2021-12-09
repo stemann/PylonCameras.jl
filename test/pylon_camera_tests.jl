@@ -116,34 +116,37 @@ using Test
     @testset "Grab asynchronously" begin
         images_to_grab = 3
         camera = PylonCamera()
-
-        grabbing_done = Condition()
-        grab_task = @async begin
-            yield() # yield to test
-            while isrunning(camera)
-                img = take!(camera)
-                images_grabbed = images_grabbed + 1
-                release!(img)
-            end
-            notify(grabbing_done)
-        end
-
         open!(camera)
+
+        compute_task = @async begin
+            i = 0
+            t = 0
+            while isrunning(camera)
+                t1 = time_ns()
+                (1:1_000_000) .^ 2 # Just a computation
+                t2 = time_ns()
+                i = i + 1
+                t = t + (t2 - t1)
+                yield()
+            end
+            return i, t
+        end
 
         images_grabbed = 0
         @test !isrunning(camera)
         start!(camera, images_to_grab)
-
         @test isrunning(camera)
-        yield() # yield to grab_task
-        @test istaskstarted(grab_task)
-        @test !istaskdone(grab_task)
-        wait(grabbing_done)
-        @test istaskdone(grab_task)
-
+        while isrunning(camera)
+            img = take!(camera)
+            images_grabbed = images_grabbed + 1
+            release!(img)
+        end
         stop!(camera)
         @test !isrunning(camera)
         @test images_grabbed == images_to_grab
-    end
 
+        compute_i, compute_t_ns = fetch(compute_task)
+        @test compute_i > 0
+        @test compute_t_ns > 0
+    end
 end
