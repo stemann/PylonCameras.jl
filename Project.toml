@@ -1,7 +1,7 @@
 name = "PylonCameras"
 uuid = "09c4fcb4-e3e2-59ed-8e2a-39362b4d7414"
 authors = ["IHP Systems R&D <research@ihp.dk>"]
-version = "0.4.0"
+version = "0.5.0"
 
 [deps]
 Cameras = "6410b9bd-72f2-532f-9386-433801972073"
